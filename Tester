@@ -1,30 +1,38 @@
-local egg = script.Parent
-local prompt = egg:WaitForChild("ProximityPrompt")
-local petDisplay = egg:WaitForChild("PetDisplay")
-local petsFolder = game:GetService("ReplicatedStorage"):WaitForChild("Pets")
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local root = char:WaitForChild("HumanoidRootPart")
 
-local canRandomize = true
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+local btn = Instance.new("TextButton", gui)
+btn.Size = UDim2.new(0, 120, 0, 40)
+btn.Position = UDim2.new(0.5, -60, 0.9, 0)
+btn.Text = "Spawn Pet"
+btn.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+btn.TextColor3 = Color3.new(0, 0, 0)
 
-local function randomizePet()
-	if not canRandomize then return end
-	canRandomize = false
+local petNames = {
+	"Dragonfly", "Raccoon", "Fennec Fox", "Disco Bee", "Queen Bee", "Queen Bee"
+}
 
-	for _, child in pairs(petDisplay:GetChildren()) do
-		if child:IsA("Model") then
-			child:Destroy()
-		end
-	end
+btn.MouseButton1Click:Connect(function()
+	local name = petNames[math.random(1, #petNames)]
+	local pet = Instance.new("Part")
+	pet.Name = "FakePet"
+	pet.Size = Vector3.new(2.5, 2.5, 2.5)
+	pet.Position = root.Position + Vector3.new(5, 0, 0)
+	pet.Anchored = true
+	pet.CanCollide = false
+	pet.Parent = workspace
 
-	local pets = petsFolder:GetChildren()
-	if #pets == 0 then return end
-	local chosenPet = pets[math.random(1, #pets)]:Clone()
-	chosenPet.Parent = petDisplay
-	chosenPet:SetPrimaryPartCFrame(petDisplay.CFrame)
+	local labelGui = Instance.new("BillboardGui", pet)
+	labelGui.Size = UDim2.new(0, 100, 0, 30)
+	labelGui.StudsOffset = Vector3.new(0, 2, 0)
+	labelGui.AlwaysOnTop = true
 
-	task.wait(3)
-	canRandomize = true
-end
-
-prompt.Triggered:Connect(function()
-	randomizePet()
+	local label = Instance.new("TextLabel", labelGui)
+	label.Size = UDim2.new(1, 0, 1, 0)
+	label.BackgroundTransparency = 1
+	label.Text = name
+	label.TextColor3 = Color3.new(0, 0, 0)
+	label.TextScaled = true
 end)

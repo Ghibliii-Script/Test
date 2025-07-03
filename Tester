@@ -1,0 +1,22 @@
+local egg = script.Parent
+local prompt = egg:WaitForChild("ProximityPrompt")
+local petDisplay = egg:WaitForChild("PetDisplay")
+local petsFolder = game:GetService("ReplicatedStorage"):WaitForChild("Pets")
+
+local function randomizePet()
+	for _, child in pairs(petDisplay:GetChildren()) do
+		if child:IsA("Model") then
+			child:Destroy()
+		end
+	end
+
+	local pets = petsFolder:GetChildren()
+	if #pets == 0 then return end
+	local chosenPet = pets[math.random(1, #pets)]:Clone()
+	chosenPet.Parent = petDisplay
+	chosenPet:SetPrimaryPartCFrame(petDisplay.CFrame)
+end
+
+prompt.Triggered:Connect(function()
+	randomizePet()
+end)
